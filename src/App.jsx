@@ -1,4 +1,4 @@
-import CareerRoadmap from "./components/RouteMap/RouteMap"
+import CareerRoadmap from "./components/RouteMap2/RouteMap"
 
 export default function App() {
   return (
