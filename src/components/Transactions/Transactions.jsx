@@ -6,6 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {
   TransactionsContainer,
+  ResponsiveWrapper,
   WarningBanner,
   WarningIconWrapper,
   TabsContainer,
@@ -96,43 +97,45 @@ const Transactions = () => {
           </Tab>
         ))}
       </TabsContainer>
-
-      <TableContainer>
-        <thead>
-          <tr>
-            <HeaderCell>Invoice No.</HeaderCell>
-            <HeaderCell>Transaction ID</HeaderCell>
-            <HeaderCell>Transaction Date</HeaderCell>
-            <HeaderCell>Course</HeaderCell>
-            <HeaderCell>Amount</HeaderCell>
-            <HeaderCell>Status</HeaderCell>
-            <HeaderCell>Actions</HeaderCell>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredTransactions.map((transaction, index) => (
-            <TableRow key={index}>
-              <TableCell>{transaction.inVoiceId}</TableCell>
-              <TableCell>
-                {transaction.merchantTransactionId.slice(0, 16)}...
-              </TableCell>
-              <TableCell>{formatDate(transaction.buyTime)}</TableCell>
-              <TableCell>{transaction.courseName}</TableCell>
-              <TableCell>{transaction.payableAmount.toFixed(2)}</TableCell>
-              <TableCell>
-                <StatusBadge status={transaction.status}>
-                  {transaction.status}
-                </StatusBadge>
-              </TableCell>
-              <TableCell>
-                <DownloadButton>
-                  <FontAwesomeIcon icon={faDownload} />
-                </DownloadButton>
-              </TableCell>
-            </TableRow>
-          ))}
-        </tbody>
-      </TableContainer>
+      
+      <ResponsiveWrapper>
+        <TableContainer>
+          <thead>
+            <tr>
+              <HeaderCell>Invoice No.</HeaderCell>
+              <HeaderCell>Transaction ID</HeaderCell>
+              <HeaderCell>Transaction Date</HeaderCell>
+              <HeaderCell>Course</HeaderCell>
+              <HeaderCell>Amount</HeaderCell>
+              <HeaderCell>Status</HeaderCell>
+              <HeaderCell>Actions</HeaderCell>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredTransactions.map((transaction, index) => (
+              <TableRow key={index}>
+                <TableCell>{transaction.inVoiceId}</TableCell>
+                <TableCell>
+                  {transaction.merchantTransactionId.slice(0, 16)}...
+                </TableCell>
+                <TableCell>{formatDate(transaction.buyTime)}</TableCell>
+                <TableCell>{transaction.courseName}</TableCell>
+                <TableCell>{transaction.payableAmount.toFixed(2)}</TableCell>
+                <TableCell>
+                  <StatusBadge status={transaction.status}>
+                    {transaction.status}
+                  </StatusBadge>
+                </TableCell>
+                <TableCell>
+                  <DownloadButton>
+                    <FontAwesomeIcon icon={faDownload} />
+                  </DownloadButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </tbody>
+        </TableContainer>
+      </ResponsiveWrapper>
     </TransactionsContainer>
   );
 };
