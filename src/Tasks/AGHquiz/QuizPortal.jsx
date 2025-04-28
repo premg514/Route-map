@@ -31,10 +31,7 @@ import {
   DifficultyCardTitle,
   DifficultyCardValue,
 } from "./styledComponents";
-import {
-  featureCards,
-  dsaProblems
-} from "../../data/data";
+import { featureCards, dsaProblems } from "../../data/data";
 
 const DSADashboard = () => {
   const [activeLanguage, setActiveLanguage] = useState("python");
@@ -48,7 +45,7 @@ const DSADashboard = () => {
   const [filteredDifficulty, setFilteredDifficulty] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("All");
-  
+
   // Create a state object to store the modified problem data
   const [problemsData, setProblemsData] = useState({});
 
@@ -56,9 +53,14 @@ const DSADashboard = () => {
   useEffect(() => {
     if (dsaProblems?.languages?.[activeLanguage]?.categories) {
       const initialData = {};
-      Object.keys(dsaProblems.languages[activeLanguage].categories).forEach(categoryId => {
-        initialData[categoryId] = [...dsaProblems.languages[activeLanguage].categories[categoryId].problems];
-      });
+      Object.keys(dsaProblems.languages[activeLanguage].categories).forEach(
+        (categoryId) => {
+          initialData[categoryId] = [
+            ...dsaProblems.languages[activeLanguage].categories[categoryId]
+              .problems,
+          ];
+        }
+      );
       setProblemsData(initialData);
     }
   }, [activeLanguage]);
@@ -80,10 +82,16 @@ const DSADashboard = () => {
   useEffect(() => {
     const calculateStats = () => {
       const allProblems = Object.values(problemsData).flat();
-      
-      const easyProblems = allProblems.filter(p => p?.difficulty === "Easy" && p?.solved).length;
-      const mediumProblems = allProblems.filter(p => p?.difficulty === "Medium" && p?.solved).length;
-      const hardProblems = allProblems.filter(p => p?.difficulty === "Hard" && p?.solved).length;
+
+      const easyProblems = allProblems.filter(
+        (p) => p?.difficulty === "Easy" && p?.solved
+      ).length;
+      const mediumProblems = allProblems.filter(
+        (p) => p?.difficulty === "Medium" && p?.solved
+      ).length;
+      const hardProblems = allProblems.filter(
+        (p) => p?.difficulty === "Hard" && p?.solved
+      ).length;
       const totalSolved = easyProblems + mediumProblems + hardProblems;
 
       setSolvedCount(totalSolved);
@@ -98,30 +106,21 @@ const DSADashboard = () => {
     calculateStats();
   }, [problemsData]);
 
-  // Calculate circle progress
-  const calculateCircleProgress = (total, solved) => {
-    const progressPercentage = total > 0 ? (solved / total) * 100 : 0;
-    const circumference = 2 * Math.PI * 54; // 2πr where r=54
-    const dashoffset = circumference - (progressPercentage / 100) * circumference;
-    return {
-      dasharray: circumference,
-      dashoffset: dashoffset
-    };
-  };
-
-  const totalProgress = calculateCircleProgress(statsData.total, solvedCount);
-
   // Filter problems based on current filters
   const filterProblems = (problems) => {
     if (!problems) return [];
-    
-    return problems.filter(problem => {
+
+    return problems.filter((problem) => {
       // Filter by difficulty
-      const difficultyMatch = filteredDifficulty === "All" || problem.difficulty === filteredDifficulty;
-      
+      const difficultyMatch =
+        filteredDifficulty === "All" ||
+        problem.difficulty === filteredDifficulty;
+
       // Filter by search term
-      const searchMatch = problem.name.toLowerCase().includes(searchTerm.toLowerCase());
-      
+      const searchMatch = problem.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+
       // Filter by tab
       let tabMatch = true;
       if (activeTab === "Solved") {
@@ -131,7 +130,7 @@ const DSADashboard = () => {
       } else if (activeTab === "Revision") {
         tabMatch = problem.revision;
       }
-      
+
       return difficultyMatch && searchMatch && tabMatch;
     });
   };
@@ -157,15 +156,61 @@ const DSADashboard = () => {
   };
 
   // Handle problem updates from ProblemTable
-  const handleProblemUpdate = (categoryId, updatedProgress, updatedProblems) => {
+  const handleProblemUpdate = (
+    categoryId,
+    updatedProgress,
+    updatedProblems
+  ) => {
     // Update the specific category with the new problem data
-    setProblemsData(prevData => ({
+    setProblemsData((prevData) => ({
       ...prevData,
-      [categoryId]: updatedProblems
+      [categoryId]: updatedProblems,
     }));
-    
+
     // The useEffect hook will trigger automatically to recalculate stats
   };
+
+  // Calculate progress percentages for each difficulty
+  const getProgressPercentage = (solved, total) => {
+    if (total === 0) return 0;
+    return (solved / total) * 100;
+  };
+
+  const easyTotal = Object.values(problemsData)
+    .flat()
+    .filter((p) => p?.difficulty === "Easy").length;
+  const mediumTotal = Object.values(problemsData)
+    .flat()
+    .filter((p) => p?.difficulty === "Medium").length;
+  const hardTotal = Object.values(problemsData)
+    .flat()
+    .filter((p) => p?.difficulty === "Hard").length;
+
+  const easyPercentage = getProgressPercentage(statsData.easy, easyTotal);
+  const mediumPercentage = getProgressPercentage(statsData.medium, mediumTotal);
+  const hardPercentage = getProgressPercentage(statsData.hard, hardTotal);
+  const circumference = 2 * Math.PI * 54; // 2πr where r=54
+  // Calculate stroke dasharray and dashoffset for each segment
+  const calculateStrokeDashValues = (percentage, segmentIndex) => {
+    const circumference = 2 * Math.PI * 54; // 2πr where r=54
+    const segmentLength = circumference / 3; // Divide circle into 3 equal parts
+    const dashArray = segmentLength;
+    const dashOffset = segmentLength * (1 - percentage / 100);
+
+    // Calculate offset for positioning each segment correctly
+    const rotationOffset = segmentIndex * 120; // 360/3 = 120 degrees per segment
+
+    return {
+      circumference,
+      dasharray: `${dashArray} ${circumference - dashArray}`,
+      dashoffset: dashOffset,
+      rotation: -90 + rotationOffset, // Start at top (-90) and adjust per segment
+    };
+  };
+
+  const easySegment = calculateStrokeDashValues(easyPercentage, 0);
+  const mediumSegment = calculateStrokeDashValues(mediumPercentage, 1);
+  const hardSegment = calculateStrokeDashValues(hardPercentage, 2);
 
   return (
     <Container>
@@ -191,59 +236,132 @@ const DSADashboard = () => {
       </CardsContainer>
       <StatandFilter>
         <StatsSection>
+       
           <CircularProgress>
             <svg width="120" height="120" viewBox="0 0 120 120">
-              {/* Background circle */}
+              {/* Background segments with light colors (incomplete portions) */}
+              {/* Easy segment background (light green) */}
               <circle
                 cx="60"
                 cy="60"
                 r="54"
                 fill="none"
-                stroke="#f1f1f1"
+                stroke="#d1fae5" // Light green
                 strokeWidth="12"
+                strokeDasharray={`${circumference / 3} ${
+                  (circumference * 2) / 3
+                }`}
+                strokeDashoffset="0"
+                transform="rotate(-90 60 60)"
+                strokeLinecap="round"
               />
 
-              {/* Progress circle */}
+              {/* Medium segment background (light orange) */}
               <circle
                 cx="60"
                 cy="60"
                 r="54"
                 fill="none"
-                stroke="#22c55e"
+                stroke="#fef3c7" // Light orange
                 strokeWidth="12"
-                strokeDasharray={totalProgress.dasharray}
-                strokeDashoffset={totalProgress.dashoffset}
+                strokeDasharray={`${circumference / 3} ${
+                  (circumference * 2) / 3
+                }`}
+                strokeDashoffset={`${-circumference / 3}`}
+                transform="rotate(-90 60 60)"
+                strokeLinecap="round"
+              />
+
+              {/* Hard segment background (light red) */}
+              <circle
+                cx="60"
+                cy="60"
+                r="54"
+                fill="none"
+                stroke="#fee2e2" // Light red
+                strokeWidth="12"
+                strokeDasharray={`${circumference / 3} ${
+                  (circumference * 2) / 3
+                }`}
+                strokeDashoffset={`${(-circumference * 2) / 3}`}
+                transform="rotate(-90 60 60)"
+                strokeLinecap="round"
+              />
+
+              {/* Foreground segments with dark colors (completed portions) */}
+              {/* Easy segment (dark green) */}
+              <circle
+                cx="60"
+                cy="60"
+                r="54"
+                fill="none"
+                stroke="#22c55e" // Dark green
+                strokeWidth="12"
+                strokeDasharray={`${
+                  (easyPercentage / 100) * (circumference / 3)
+                } ${circumference}`}
+                strokeDashoffset="0"
+                transform="rotate(-90 60 60)"
+                strokeLinecap="round"
+              />
+
+              {/* Medium segment (dark orange) */}
+              <circle
+                cx="60"
+                cy="60"
+                r="54"
+                fill="none"
+                stroke="#f59e0b" // Dark orange
+                strokeWidth="12"
+                strokeDasharray={`${
+                  (mediumPercentage / 100) * (circumference / 3)
+                } ${circumference}`}
+                strokeDashoffset={`${-circumference / 3}`}
+                transform="rotate(-90 60 60)"
+                strokeLinecap="round"
+              />
+
+              {/* Hard segment (dark red) */}
+              <circle
+                cx="60"
+                cy="60"
+                r="54"
+                fill="none"
+                stroke="#ef4444" // Dark red
+                strokeWidth="12"
+                strokeDasharray={`${
+                  (hardPercentage / 100) * (circumference / 3)
+                } ${circumference}`}
+                strokeDashoffset={`${(-circumference * 2) / 3}`}
                 transform="rotate(-90 60 60)"
                 strokeLinecap="round"
               />
             </svg>
             <ProgressText>
-              <ProgressNumber>{solvedCount}</ProgressNumber>
-              <ProgressLabel>/{statsData.total}</ProgressLabel>
+              <ProgressLabel><span>{solvedCount}</span>/{statsData.total}</ProgressLabel>
               <ProgressLabel>Solved</ProgressLabel>
             </ProgressText>
           </CircularProgress>
-
           <StatsDetails>
             <StatsList>
               <DifficultyCard>
                 <DifficultyCardTitle level="easy">Easy</DifficultyCardTitle>
                 <DifficultyCardValue>
-                  {statsData.easy}/{Object.values(problemsData).flat().filter(p => p?.difficulty === "Easy").length}
+                  {statsData.easy}/{easyTotal}
                 </DifficultyCardValue>
               </DifficultyCard>
 
               <DifficultyCard>
                 <DifficultyCardTitle level="medium">Medium</DifficultyCardTitle>
                 <DifficultyCardValue>
-                  {statsData.medium}/{Object.values(problemsData).flat().filter(p => p?.difficulty === "Medium").length}
+                  {statsData.medium}/{mediumTotal}
                 </DifficultyCardValue>
               </DifficultyCard>
 
               <DifficultyCard>
                 <DifficultyCardTitle level="hard">Hard</DifficultyCardTitle>
                 <DifficultyCardValue>
-                  {statsData.hard}/{Object.values(problemsData).flat().filter(p => p?.difficulty === "Hard").length}
+                  {statsData.hard}/{hardTotal}
                 </DifficultyCardValue>
               </DifficultyCard>
             </StatsList>
@@ -252,8 +370,8 @@ const DSADashboard = () => {
 
         <SearchSection>
           <SearchBar>
-            <SearchInput 
-              placeholder="Search Problem" 
+            <SearchInput
+              placeholder="Search Problem"
               value={searchTerm}
               onChange={handleSearchChange}
             />
@@ -265,7 +383,10 @@ const DSADashboard = () => {
           <FilterContainer>
             <FilterWrapper>
               <FilterLabel>Difficulty</FilterLabel>
-              <FilterSelect value={filteredDifficulty} onChange={handleDifficultyChange}>
+              <FilterSelect
+                value={filteredDifficulty}
+                onChange={handleDifficultyChange}
+              >
                 <option>All</option>
                 <option>Easy</option>
                 <option>Medium</option>
@@ -275,8 +396,11 @@ const DSADashboard = () => {
 
             <FilterWrapper>
               <FilterLabel>Preferred Language</FilterLabel>
-              <FilterSelect value={activeLanguage} onChange={handleLanguageChange}>
-                {Object.keys(dsaProblems.languages).map(lang => (
+              <FilterSelect
+                value={activeLanguage}
+                onChange={handleLanguageChange}
+              >
+                {Object.keys(dsaProblems.languages).map((lang) => (
                   <option key={lang} value={lang}>
                     {lang.charAt(0).toUpperCase() + lang.slice(1)}
                   </option>
@@ -288,9 +412,9 @@ const DSADashboard = () => {
       </StatandFilter>
 
       <TabsContainer>
-        {["All", "Solved", "Not Attempted", "Revision"].map(tab => (
-          <Tab 
-            key={tab} 
+        {["All", "Solved", "Not Attempted", "Revision"].map((tab) => (
+          <Tab
+            key={tab}
             active={activeTab === tab}
             onClick={() => handleTabChange(tab)}
           >
@@ -299,21 +423,25 @@ const DSADashboard = () => {
         ))}
       </TabsContainer>
 
-      {getAvailableCategories().map(categoryId => {
+      {getAvailableCategories().map((categoryId) => {
         if (!problemsData[categoryId]) return null;
-        
-        const categoryTitle = dsaProblems.languages[activeLanguage].categories[categoryId].title;
-        const filteredCategoryProblems = filterProblems(problemsData[categoryId]);
-        
+
+        const categoryTitle =
+          dsaProblems.languages[activeLanguage].categories[categoryId].title;
+        const filteredCategoryProblems = filterProblems(
+          problemsData[categoryId]
+        );
+
         // Only show sections with matching problems
-        if (filteredCategoryProblems.length === 0 && activeTab !== "All") return null;
-        
+        if (filteredCategoryProblems.length === 0 && activeTab !== "All")
+          return null;
+
         return (
           <TopicSection key={categoryId}>
             <ProblemTable
               title={categoryTitle}
               problems={filteredCategoryProblems}
-              onProgressUpdate={(progress, updatedProblems) => 
+              onProgressUpdate={(progress, updatedProblems) =>
                 handleProblemUpdate(categoryId, progress, updatedProblems)
               }
             />

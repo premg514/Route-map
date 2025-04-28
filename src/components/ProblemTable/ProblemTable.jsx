@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Github, Youtube, Star } from "lucide-react";
+import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons"; // for filled star
+import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons"; // for empty star
+import {
+  faGithub,
+  faYoutube,
+} from "@fortawesome/free-brands-svg-icons";
+
 import {
   Container,
   TopicHeader,
@@ -13,11 +19,16 @@ import {
   ProgressBarFill,
   ProgressBarContainer,
 } from "./styledComponents";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // New styled component for the progress bar
 
-
-const ProblemTable = ({ title, problems: initialProblems, progress, onProgressUpdate }) => {
+const ProblemTable = ({
+  title,
+  problems: initialProblems,
+  progress,
+  onProgressUpdate,
+}) => {
   // Keep local state for immediate UI updates
   const [problemsList, setProblemsList] = useState(initialProblems);
   const [progressPercent, setProgressPercent] = useState(0);
@@ -30,7 +41,7 @@ const ProblemTable = ({ title, problems: initialProblems, progress, onProgressUp
 
   // Calculate current progress
   const calculateProgress = (problems) => {
-    const solved = problems.filter(p => p.solved).length;
+    const solved = problems.filter((p) => p.solved).length;
     return `${solved}/${problems.length}`;
   };
 
@@ -40,7 +51,7 @@ const ProblemTable = ({ title, problems: initialProblems, progress, onProgressUp
       setProgressPercent(0);
       return;
     }
-    const solved = problems.filter(p => p.solved).length;
+    const solved = problems.filter((p) => p.solved).length;
     const percent = (solved / problems.length) * 100;
     setProgressPercent(percent);
   };
@@ -51,7 +62,7 @@ const ProblemTable = ({ title, problems: initialProblems, progress, onProgressUp
     updatedProblems[index].solved = !updatedProblems[index].solved;
     setProblemsList(updatedProblems);
     updateProgressPercent(updatedProblems);
-    
+
     // Notify parent component about the update
     if (onProgressUpdate) {
       onProgressUpdate(calculateProgress(updatedProblems), updatedProblems);
@@ -63,7 +74,7 @@ const ProblemTable = ({ title, problems: initialProblems, progress, onProgressUp
     const updatedProblems = [...problemsList];
     updatedProblems[index].revision = !updatedProblems[index].revision;
     setProblemsList(updatedProblems);
-    
+
     // Notify parent component about the update (for revision)
     if (onProgressUpdate) {
       onProgressUpdate(calculateProgress(updatedProblems), updatedProblems);
@@ -75,14 +86,13 @@ const ProblemTable = ({ title, problems: initialProblems, progress, onProgressUp
       <TopicHeader>{title}</TopicHeader>
       <ProgressHeader>
         <span>Progress</span>
+        {/* Progress Bar */}
+        <ProgressBarContainer>
+          <ProgressBarFill style={{ width: `${progressPercent}%` }} />
+        </ProgressBarContainer>
         <span>{progress || calculateProgress(problemsList)}</span>
       </ProgressHeader>
-      
-      {/* Progress Bar */}
-      <ProgressBarContainer>
-        <ProgressBarFill style={{ width: `${progressPercent}%` }} />
-      </ProgressBarContainer>
-      
+
       <TableContainer>
         <Table>
           <thead>
@@ -111,7 +121,7 @@ const ProblemTable = ({ title, problems: initialProblems, progress, onProgressUp
                       onChange={() => toggleSolvedStatus(index)}
                     />
                   </Td>
-                  <Td style={{ color: "#3b82f6", cursor: "pointer" }}>
+                  <Td style={{ color: "#3C9BD9", cursor: "pointer" }}>
                     {problem.name}
                   </Td>
                   <Td>
@@ -128,7 +138,7 @@ const ProblemTable = ({ title, problems: initialProblems, progress, onProgressUp
                         rel="noopener noreferrer"
                         aria-label="View code on GitHub"
                       >
-                        <Github size={18} />
+                        <FontAwesomeIcon fontSize="18" icon={faGithub} />
                       </IconButton>
                     )}
                     {problem.links?.youtube && (
@@ -139,19 +149,23 @@ const ProblemTable = ({ title, problems: initialProblems, progress, onProgressUp
                         rel="noopener noreferrer"
                         aria-label="Watch tutorial on YouTube"
                       >
-                        <Youtube size={18} />
+                        <FontAwesomeIcon fontSize="18px" icon={faYoutube} />
                       </IconButton>
                     )}
                   </Td>
                   <Td>
-                    <IconButton 
+                    <IconButton
                       onClick={() => toggleRevisionMark(index)}
-                      aria-label={problem.revision ? "Remove from revision" : "Mark for revision"}
+                      aria-label={
+                        problem.revision
+                          ? "Remove from revision"
+                          : "Mark for revision"
+                      }
                     >
-                      <Star
-                        size={18}
-                        fill={problem.revision ? "#FFD700" : "none"}
+                      <FontAwesomeIcon
+                        icon={problem.revision ? solidStar : regularStar}
                         color={problem.revision ? "#FFD700" : "currentColor"}
+                        size="lg" // you can adjust size
                       />
                     </IconButton>
                   </Td>

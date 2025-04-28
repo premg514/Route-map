@@ -8,11 +8,37 @@ export const Card = styled.div`
   border:${(props) => (props.active ? "" : "#F5EFEB80")};
   font-family: Inter, Sans-serif;
   width: 300px;
+  transition: all 0.3s ease;
+  
+  /* Tablet landscape */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    width: 260px;
+    padding: 5px
+ 
+  }
+  
+  /* Tablet portrait */
+  @media (min-width: 481px) and (max-width: 768px) {
+    width: 200px;
+    padding: 3px;
+  }
+  
+  /* Mobile */
+  @media (max-width: 480px) {
+    width: ${(props) => (props.active ? "170px" : "75px")};
+    padding: 3px;
+  }
 `;
 
 export const CardContent = styled.div`
   display: flex;
+  gap: 4px;
   align-items: center;
+  
+  /* Tablet */
+  @media (min-width: 481px) and (max-width: 1024px) {
+    gap: 8px;
+  }
 `;
 
 export const CardIcon = styled.img`
@@ -22,7 +48,6 @@ export const CardIcon = styled.img`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 0.75rem;
   background-color: ${(props) =>
     props.type === "crash"
       ? "rgba(239, 68, 68, 0.1)"
@@ -36,17 +61,94 @@ export const CardIcon = styled.img`
       ? "#3b82f6"
       : "#f59e0b"};
   font-size: 1.25rem;
+  
+  /* Tablet landscape */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    width: 65px;
+    height: 50px;
+  }
+  
+  /* Tablet portrait */
+  @media (min-width: 481px) and (max-width: 768px) {
+    width: 60px;
+    height: 45px;
+  }
+  
+  /* Mobile */
+  @media (max-width: 480px) {
+    width: 53px;
+    height: 40px;
+  }
 `;
 
-export const CardDetails = styled.div``;
+export const CardDetails = styled.div`
+  flex: 1;
+  overflow: hidden;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  
+  /* Tablet */
+  @media (min-width: 481px) and (max-width: 1024px) {
+    max-width: calc(100% - 70px);
+  }
+  
+ @media (max-width: 480px) {
+  display: ${(props) => (props.active ? "flex" : "none")};
+  width: 190px;
+  height: 55px;
+}
+
+`;
 
 export const CardTitle = styled.h3`
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 16px;
   color: ${(props) => (props.active ? "#ffffff" : "#000000")};
+  margin: 0 0 0.25rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  
+  /* Tablet landscape */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    font-size: 15px;
+  }
+  
+  /* Tablet portrait */
+  @media (min-width: 481px) and (max-width: 768px) {
+    font-size: 10px;
+    margin-bottom: 0.2rem;
+  }
+  
+  /* Mobile */
+  @media (max-width: 480px) {
+    font-size: 8px;
+  }
 `;
 
 export const CardSubtitle = styled.p`
-  font-size: 0.75rem;
+  font-size: 13px;
   color: ${(props) => (props.active ? "#ffffff" : "#000000")};
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  
+  /* Tablet landscape */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    font-size: 12px;
+  }
+  
+  /* Tablet portrait */
+  @media (min-width: 481px) and (max-width: 768px) {
+    font-size: 9px;
+  }
+  
+  /* Mobile */
+  @media (max-width: 480px) {
+    font-size: 9px;
+  }
 `;
+

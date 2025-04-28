@@ -2,8 +2,12 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   max-width: 100%;
-  margin: 0 ;
+  margin: 0;
   padding: 2rem;
+  background: #fafbff;
+  @media (max-width: 480px) {
+    padding: 6px;
+  }
 `;
 
 export const Header = styled.header`
@@ -12,30 +16,37 @@ export const Header = styled.header`
 `;
 
 export const Title = styled.h1`
-  font-size: 1.5rem;
+  font-size: 32px;
   font-weight: 700;
-  color: #333333;
+  color: #343434;
   font-family: Work Sans, Sans-serif;
 `;
 
 export const Subtitle = styled.p`
-  font-size: 0.875rem;
-  color: #6b7280;
+  font-size: 14px;
+  color: #aeaeae;
   font-family: Work Sans, Sans-serif;
 `;
 
 export const CardsContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  display: flex;
+  justify-content:space-between;
+  align-items:center;
+  gap: 4px;
   margin-bottom: 1.5rem;
-
+  max-width: 100%;
   @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+    gap: 5px;
   }
 `;
 export const StatandFilter = styled.div`
   display: flex;
+  gap: 15px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  @media (max-width: 480px) {
+    flex-direction: column;
+  }
 `;
 
 export const StatsSection = styled.div`
@@ -44,14 +55,16 @@ export const StatsSection = styled.div`
   padding: 1.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   display: flex;
-  font-family: Inter, Sans-serif;
+  font-family: Inter, sans-serif;
   align-items: center;
-  gap: 8px;
+  gap: 2rem;
 
   @media (max-width: 768px) {
-    flex-direction: column;
     align-items: center;
     gap: 1.5rem;
+  }
+  @media (max-width: 480px) {
+    justify-content:space-between;
   }
 `;
 
@@ -59,6 +72,7 @@ export const CircularProgress = styled.div`
   position: relative;
   width: 120px;
   height: 120px;
+  flex-shrink: 0;
 `;
 
 export const ProgressText = styled.div`
@@ -70,17 +84,25 @@ export const ProgressText = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  font-family: Work Sans, Sans-serif;
 `;
 
 export const ProgressNumber = styled.span`
   font-size: 2rem;
   font-weight: 700;
   line-height: 1;
+  color: #333;
 `;
 
 export const ProgressLabel = styled.div`
-  font-size: 0.875rem;
-  color: #6b7280;
+  font-size: 18px;
+  color: #343434;
+  span {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+    color: #333;
+  }
 `;
 
 export const StatsDetails = styled.div`
@@ -94,72 +116,63 @@ export const StatsDetails = styled.div`
 
 export const StatsList = styled.div`
   display: flex;
-  flex-direction: column;
   gap: 1rem;
+  flex-direction: column;
 
   @media (max-width: 768px) {
     justify-content: center;
   }
-`;
-
-export const StatItem = styled.div`
-  padding: 0.25rem 0;
-`;
-
-export const StatValue = styled.div`
-  font-weight: 600;
-  color: #333333;
-`;
-
-export const StatLabel = styled.div`
-  font-size: 0.75rem;
-  color: #6b7280;
+  @media (max-width: 480px) {
+    gap: 1px;
+  }
 `;
 
 export const DifficultyCard = styled.div`
   border-radius: 0.5rem;
-  background-color: #F5F5F5;
+  background-color: #f5f5f5;
+  padding: 0.75rem 1rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  width: 120px;
-  border: none;
-  text-align:center;
+  min-width: 100px;
+  text-align: center;
 `;
 
 export const DifficultyCardTitle = styled.div`
-  font-size: 0.875rem;
+  font-size: 12px;
   font-weight: 500;
+  margin-bottom: 0.25rem;
+
   ${(props) =>
     props.level === "easy" &&
     `
-    color:  #22c55e;
+    color: #52B557;
   `}
 
   ${(props) =>
     props.level === "medium" &&
     `
-   color:  #f59e0b;
+    color: #FDA829;
   `}
   
   ${(props) =>
     props.level === "hard" &&
     `
-    color:  #ef4444;
+    color: #FF3F3F;
   `}
 `;
 
 export const DifficultyCardValue = styled.div`
-  font-size: 1rem;
+  font-size: 12px;
   font-weight: 600;
-  color: #333333;
+  color: #000000;
 `;
 
 export const SearchSection = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content:center;
+  justify-content: center;
   gap: 1rem;
   margin-bottom: 1rem;
-  flex:1;
+  flex: 1;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -168,6 +181,7 @@ export const SearchSection = styled.div`
 
 export const SearchBar = styled.div`
   position: relative;
+  max-width: 100%;
 `;
 
 export const SearchInput = styled.input`
@@ -175,17 +189,19 @@ export const SearchInput = styled.input`
   padding: 0.5rem;
   border: 1px solid #e5e7eb;
   border-radius: 0.375rem;
-  background-color: #ffffff;
+  background-color: #f7f4f4;
   font-size: 0.875rem;
   outline: none;
 `;
 
 export const SearchIcon = styled.div`
   position: absolute;
-  right: 0px;
-  top: 0;
-  bottom: 0;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
   color: #6b7280;
+  display: flex;
+  align-items: center;
 `;
 
 export const FilterContainer = styled.div`
@@ -198,7 +214,7 @@ export const FilterContainer = styled.div`
 `;
 
 export const FilterWrapper = styled.div`
-   flex:1;
+  flex: 1;
 
   @media (max-width: 768px) {
     flex: 1;
@@ -210,6 +226,7 @@ export const FilterLabel = styled.label`
   font-size: 0.75rem;
   margin-bottom: 0.25rem;
   color: #6b7280;
+  font-family: Work Sans, sans-serif;
 `;
 
 export const FilterSelect = styled.select`
@@ -217,10 +234,9 @@ export const FilterSelect = styled.select`
   padding: 0.5rem;
   border: 1px solid #e5e7eb;
   border-radius: 0.375rem;
-  background-color: #ffffff;
+  background-color: #f7f4f4;
   font-size: 0.875rem;
   outline: none;
- 
 `;
 
 export const TabsContainer = styled.div`
@@ -237,11 +253,12 @@ export const TabsContainer = styled.div`
 export const Tab = styled.button`
   padding: 0.5rem 1rem;
   border-radius: 9999px;
-  font-size: 0.875rem;
+  font-size: 18px;
+  font-weight: ${(props) => props.active && "bold"};
   margin-right: 0.5rem;
   border: none;
-  background-color: ${(props) => (props.active ? "#ef4444" : "transparent")};
-  color: ${(props) => (props.active ? "#ffffff" : "#333333")};
+  background-color: ${(props) => (props.active ? "#ef4444" : "#f7f4f4")};
+  color: ${(props) => (props.active ? "#ffffff" : "#928284")};
   cursor: pointer;
   white-space: nowrap;
 `;
