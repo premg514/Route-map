@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
@@ -57,44 +57,35 @@ const DSADashboard = () => {
     if (dsaProblems?.categories) {
       const initialData = {};
       Object.keys(dsaProblems.categories).forEach((categoryId) => {
-        initialData[categoryId] = [...dsaProblems.categories[categoryId].problems];
+        initialData[categoryId] = [
+          ...dsaProblems.categories[categoryId].problems,
+        ];
       });
       setProblemsData(initialData);
     }
   }, []);
 
-  // Helper function to get problems for a category
-  const getProblemsForCategory = (category) => {
-    return problemsData[category] || [];
-  };
-
   // Get all available categories
-  const getAvailableCategories = () => {
-    if (dsaProblems?.categories) {
-      return Object.keys(dsaProblems.categories);
-    }
-    return [];
-  };
+  const catergories = useMemo(() => {
+    const value = Object.keys(dsaProblems?.categories);
+    return value;
+  }, []);
 
   // Get all category titles for the filter dropdown
-  const getCategoryTitles = () => {
-    if (dsaProblems?.categories) {
-      return Object.keys(dsaProblems.categories).map(
-        (key) => dsaProblems.categories[key].title
-      );
-    }
-    return [];
-  };
+  const CategoryTitles = useMemo(() => {
+    const value = catergories.map((key) => dsaProblems.categories[key].title);
+    return value;
+  },[]);
 
   // Calculate stats based on problem data and active level
   useEffect(() => {
     const calculateStats = () => {
       // Get all problems
       const allProblems = Object.values(problemsData).flat();
-      
+
       // Filter problems by active level
-      const levelFilteredProblems = allProblems.filter(problem => 
-        problem.level && problem.level.includes(activeLevel)
+      const levelFilteredProblems = allProblems.filter(
+        (problem) => problem.level && problem.level.includes(activeLevel)
       );
 
       const easyProblems = levelFilteredProblems.filter(
@@ -127,16 +118,15 @@ const DSADashboard = () => {
     return problems.filter((problem) => {
       // Filter by level (time duration)
       const levelMatch = problem.level && problem.level.includes(activeLevel);
-      
+
       // Filter by difficulty
       const difficultyMatch =
         filteredDifficulty === "All" ||
         problem.difficulty === filteredDifficulty;
 
       // Filter by topic/category
-      const topicMatch = 
-        filteredTopic === "All" || 
-        categoryTitle === filteredTopic;
+      const topicMatch =
+        filteredTopic === "All" || categoryTitle === filteredTopic;
 
       // Filter by search term
       const searchMatch = problem.name
@@ -153,7 +143,9 @@ const DSADashboard = () => {
         tabMatch = problem.revision;
       }
 
-      return levelMatch && difficultyMatch && searchMatch && tabMatch && topicMatch;
+      return (
+        levelMatch && difficultyMatch && searchMatch && tabMatch && topicMatch
+      );
     });
   };
 
@@ -205,19 +197,25 @@ const DSADashboard = () => {
 
   // Count total problems for each difficulty that match the current level
   const allProblems = Object.values(problemsData).flat();
-  const levelFilteredProblems = allProblems.filter(problem => 
-    problem.level && problem.level.includes(activeLevel)
+  const levelFilteredProblems = allProblems.filter(
+    (problem) => problem.level && problem.level.includes(activeLevel)
   );
-  
-  const easyTotal = levelFilteredProblems.filter(p => p?.difficulty === "Easy").length;
-  const mediumTotal = levelFilteredProblems.filter(p => p?.difficulty === "Medium").length;
-  const hardTotal = levelFilteredProblems.filter(p => p?.difficulty === "Hard").length;
+
+  const easyTotal = levelFilteredProblems.filter(
+    (p) => p?.difficulty === "Easy"
+  ).length;
+  const mediumTotal = levelFilteredProblems.filter(
+    (p) => p?.difficulty === "Medium"
+  ).length;
+  const hardTotal = levelFilteredProblems.filter(
+    (p) => p?.difficulty === "Hard"
+  ).length;
 
   const easyPercentage = getProgressPercentage(statsData.easy, easyTotal);
   const mediumPercentage = getProgressPercentage(statsData.medium, mediumTotal);
   const hardPercentage = getProgressPercentage(statsData.hard, hardTotal);
   const circumference = 2 * Math.PI * 54; // 2πr where r=54
-  
+
 
 
 
@@ -347,7 +345,9 @@ const DSADashboard = () => {
               />
             </svg>
             <ProgressText>
-              <ProgressLabel><span>{solvedCount}</span>/{statsData.total}</ProgressLabel>
+              <ProgressLabel>
+                <span>{solvedCount}</span>/{statsData.total}
+              </ProgressLabel>
               <ProgressLabel>Solved</ProgressLabel>
             </ProgressText>
           </CircularProgress>
@@ -405,12 +405,9 @@ const DSADashboard = () => {
 
             <FilterWrapper>
               <FilterLabel>Topic</FilterLabel>
-              <FilterSelect
-                value={filteredTopic}
-                onChange={handleTopicChange}
-              >
+              <FilterSelect value={filteredTopic} onChange={handleTopicChange}>
                 <option>All</option>
-                {getCategoryTitles().map((title) => (
+                {CategoryTitles.map((title) => (
                   <option key={title} value={title}>
                     {title}
                   </option>
@@ -433,7 +430,7 @@ const DSADashboard = () => {
         ))}
       </TabsContainer>
 
-      {getAvailableCategories().map((categoryId) => {
+      {catergories.map((categoryId) => {
         if (!problemsData[categoryId]) return null;
 
         const categoryTitle = dsaProblems.categories[categoryId].title;
@@ -443,8 +440,7 @@ const DSADashboard = () => {
         );
 
         // Only show sections with matching problems
-        if (filteredCategoryProblems.length === 0)
-          return null;
+        if (filteredCategoryProblems.length === 0) return null;
 
         return (
           <TopicSection key={categoryId}>

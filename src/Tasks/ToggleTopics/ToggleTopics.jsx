@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
-import { ChevronDown, ChevronRight } from "lucide-react";
 import { toggleTopics } from "../../data/toggleData";
 import {
   TestContainer,
