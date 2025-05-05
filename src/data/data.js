@@ -4733,10 +4733,6 @@ export const dsaProblems  = {
   }
 };
 
-// console.log(dsaProblems)
-
-
-
 
 // Update the feature cards to match the level types
 export const featureCards = [

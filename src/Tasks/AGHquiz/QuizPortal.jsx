@@ -218,27 +218,8 @@ const DSADashboard = () => {
   const hardPercentage = getProgressPercentage(statsData.hard, hardTotal);
   const circumference = 2 * Math.PI * 54; // 2πr where r=54
   
-  // Calculate stroke dasharray and dashoffset for each segment
-  const calculateStrokeDashValues = (percentage, segmentIndex) => {
-    const circumference = 2 * Math.PI * 54; // 2πr where r=54
-    const segmentLength = circumference / 3; // Divide circle into 3 equal parts
-    const dashArray = segmentLength;
-    const dashOffset = segmentLength * (1 - percentage / 100);
 
-    // Calculate offset for positioning each segment correctly
-    const rotationOffset = segmentIndex * 120; // 360/3 = 120 degrees per segment
 
-    return {
-      circumference,
-      dasharray: `${dashArray} ${circumference - dashArray}`,
-      dashoffset: dashOffset,
-      rotation: -90 + rotationOffset, // Start at top (-90) and adjust per segment
-    };
-  };
-
-  const easySegment = calculateStrokeDashValues(easyPercentage, 0);
-  const mediumSegment = calculateStrokeDashValues(mediumPercentage, 1);
-  const hardSegment = calculateStrokeDashValues(hardPercentage, 2);
 
   return (
     <Container>
