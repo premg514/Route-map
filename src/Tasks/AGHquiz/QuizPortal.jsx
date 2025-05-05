@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Search, Youtube } from "lucide-react";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+
 import FeatureCard from "../../components/FeatureCard/FeatureCard";
 import ProblemTable from "../../components/ProblemTable/ProblemTable";
 import {
@@ -12,7 +15,6 @@ import {
   StatsSection,
   CircularProgress,
   ProgressText,
-  ProgressNumber,
   ProgressLabel,
   StatsDetails,
   SearchSection,
@@ -34,7 +36,6 @@ import {
 import { featureCards, dsaProblems } from "../../data/data";
 
 const DSADashboard = () => {
-  const [activeLanguage, setActiveLanguage] = useState("python");
   const [solvedCount, setSolvedCount] = useState(0);
   const [statsData, setStatsData] = useState({
     total: 300,
@@ -43,27 +44,24 @@ const DSADashboard = () => {
     hard: 0,
   });
   const [filteredDifficulty, setFilteredDifficulty] = useState("All");
+  const [filteredTopic, setFilteredTopic] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("All");
+  const [activeLevel, setActiveLevel] = useState("greaterThanThreeMonths"); // Default level - 3+ months
 
   // Create a state object to store the modified problem data
   const [problemsData, setProblemsData] = useState({});
 
-  // Initialize problems data from dsaProblems on first load and language change
+  // Initialize problems data from dsaProblems on first load
   useEffect(() => {
-    if (dsaProblems?.languages?.[activeLanguage]?.categories) {
+    if (dsaProblems?.categories) {
       const initialData = {};
-      Object.keys(dsaProblems.languages[activeLanguage].categories).forEach(
-        (categoryId) => {
-          initialData[categoryId] = [
-            ...dsaProblems.languages[activeLanguage].categories[categoryId]
-              .problems,
-          ];
-        }
-      );
+      Object.keys(dsaProblems.categories).forEach((categoryId) => {
+        initialData[categoryId] = [...dsaProblems.categories[categoryId].problems];
+      });
       setProblemsData(initialData);
     }
-  }, [activeLanguage]);
+  }, []);
 
   // Helper function to get problems for a category
   const getProblemsForCategory = (category) => {
@@ -72,31 +70,47 @@ const DSADashboard = () => {
 
   // Get all available categories
   const getAvailableCategories = () => {
-    if (dsaProblems?.languages?.[activeLanguage]?.categories) {
-      return Object.keys(dsaProblems.languages[activeLanguage].categories);
+    if (dsaProblems?.categories) {
+      return Object.keys(dsaProblems.categories);
     }
     return [];
   };
 
-  // Calculate stats based on problem data
+  // Get all category titles for the filter dropdown
+  const getCategoryTitles = () => {
+    if (dsaProblems?.categories) {
+      return Object.keys(dsaProblems.categories).map(
+        (key) => dsaProblems.categories[key].title
+      );
+    }
+    return [];
+  };
+
+  // Calculate stats based on problem data and active level
   useEffect(() => {
     const calculateStats = () => {
+      // Get all problems
       const allProblems = Object.values(problemsData).flat();
+      
+      // Filter problems by active level
+      const levelFilteredProblems = allProblems.filter(problem => 
+        problem.level && problem.level.includes(activeLevel)
+      );
 
-      const easyProblems = allProblems.filter(
+      const easyProblems = levelFilteredProblems.filter(
         (p) => p?.difficulty === "Easy" && p?.solved
       ).length;
-      const mediumProblems = allProblems.filter(
+      const mediumProblems = levelFilteredProblems.filter(
         (p) => p?.difficulty === "Medium" && p?.solved
       ).length;
-      const hardProblems = allProblems.filter(
+      const hardProblems = levelFilteredProblems.filter(
         (p) => p?.difficulty === "Hard" && p?.solved
       ).length;
       const totalSolved = easyProblems + mediumProblems + hardProblems;
 
       setSolvedCount(totalSolved);
       setStatsData({
-        total: allProblems.length,
+        total: levelFilteredProblems.length,
         easy: easyProblems,
         medium: mediumProblems,
         hard: hardProblems,
@@ -104,17 +118,25 @@ const DSADashboard = () => {
     };
 
     calculateStats();
-  }, [problemsData]);
+  }, [problemsData, activeLevel]);
 
   // Filter problems based on current filters
-  const filterProblems = (problems) => {
+  const filterProblems = (problems, categoryTitle) => {
     if (!problems) return [];
 
     return problems.filter((problem) => {
+      // Filter by level (time duration)
+      const levelMatch = problem.level && problem.level.includes(activeLevel);
+      
       // Filter by difficulty
       const difficultyMatch =
         filteredDifficulty === "All" ||
         problem.difficulty === filteredDifficulty;
+
+      // Filter by topic/category
+      const topicMatch = 
+        filteredTopic === "All" || 
+        categoryTitle === filteredTopic;
 
       // Filter by search term
       const searchMatch = problem.name
@@ -131,18 +153,18 @@ const DSADashboard = () => {
         tabMatch = problem.revision;
       }
 
-      return difficultyMatch && searchMatch && tabMatch;
+      return levelMatch && difficultyMatch && searchMatch && tabMatch && topicMatch;
     });
-  };
-
-  // Handle language change
-  const handleLanguageChange = (e) => {
-    setActiveLanguage(e.target.value);
   };
 
   // Handle difficulty filter change
   const handleDifficultyChange = (e) => {
     setFilteredDifficulty(e.target.value);
+  };
+
+  // Handle topic filter change
+  const handleTopicChange = (e) => {
+    setFilteredTopic(e.target.value);
   };
 
   // Handle search input change
@@ -153,6 +175,11 @@ const DSADashboard = () => {
   // Handle tab change
   const handleTabChange = (tab) => {
     setActiveTab(tab);
+  };
+
+  // Handle feature card click to change level
+  const handleLevelChange = (levelType) => {
+    setActiveLevel(levelType);
   };
 
   // Handle problem updates from ProblemTable
@@ -170,26 +197,27 @@ const DSADashboard = () => {
     // The useEffect hook will trigger automatically to recalculate stats
   };
 
-  // Calculate progress percentages for each difficulty
+  // Calculate progress percentages for each difficulty level
   const getProgressPercentage = (solved, total) => {
     if (total === 0) return 0;
     return (solved / total) * 100;
   };
 
-  const easyTotal = Object.values(problemsData)
-    .flat()
-    .filter((p) => p?.difficulty === "Easy").length;
-  const mediumTotal = Object.values(problemsData)
-    .flat()
-    .filter((p) => p?.difficulty === "Medium").length;
-  const hardTotal = Object.values(problemsData)
-    .flat()
-    .filter((p) => p?.difficulty === "Hard").length;
+  // Count total problems for each difficulty that match the current level
+  const allProblems = Object.values(problemsData).flat();
+  const levelFilteredProblems = allProblems.filter(problem => 
+    problem.level && problem.level.includes(activeLevel)
+  );
+  
+  const easyTotal = levelFilteredProblems.filter(p => p?.difficulty === "Easy").length;
+  const mediumTotal = levelFilteredProblems.filter(p => p?.difficulty === "Medium").length;
+  const hardTotal = levelFilteredProblems.filter(p => p?.difficulty === "Hard").length;
 
   const easyPercentage = getProgressPercentage(statsData.easy, easyTotal);
   const mediumPercentage = getProgressPercentage(statsData.medium, mediumTotal);
   const hardPercentage = getProgressPercentage(statsData.hard, hardTotal);
   const circumference = 2 * Math.PI * 54; // 2πr where r=54
+  
   // Calculate stroke dasharray and dashoffset for each segment
   const calculateStrokeDashValues = (percentage, segmentIndex) => {
     const circumference = 2 * Math.PI * 54; // 2πr where r=54
@@ -230,13 +258,13 @@ const DSADashboard = () => {
             subtitle={card.subtitle}
             icon={card.icon}
             type={card.type}
-            active={card.active}
+            active={card.type === activeLevel}
+            onClick={() => handleLevelChange(card.type)}
           />
         ))}
       </CardsContainer>
       <StatandFilter>
         <StatsSection>
-       
           <CircularProgress>
             <svg width="120" height="120" viewBox="0 0 120 120">
               {/* Background segments with light colors (incomplete portions) */}
@@ -376,7 +404,7 @@ const DSADashboard = () => {
               onChange={handleSearchChange}
             />
             <SearchIcon>
-              <Search size={18} />
+              <FontAwesomeIcon icon={faMagnifyingGlass} />
             </SearchIcon>
           </SearchBar>
 
@@ -395,14 +423,15 @@ const DSADashboard = () => {
             </FilterWrapper>
 
             <FilterWrapper>
-              <FilterLabel>Preferred Language</FilterLabel>
+              <FilterLabel>Topic</FilterLabel>
               <FilterSelect
-                value={activeLanguage}
-                onChange={handleLanguageChange}
+                value={filteredTopic}
+                onChange={handleTopicChange}
               >
-                {Object.keys(dsaProblems.languages).map((lang) => (
-                  <option key={lang} value={lang}>
-                    {lang.charAt(0).toUpperCase() + lang.slice(1)}
+                <option>All</option>
+                {getCategoryTitles().map((title) => (
+                  <option key={title} value={title}>
+                    {title}
                   </option>
                 ))}
               </FilterSelect>
@@ -426,14 +455,14 @@ const DSADashboard = () => {
       {getAvailableCategories().map((categoryId) => {
         if (!problemsData[categoryId]) return null;
 
-        const categoryTitle =
-          dsaProblems.languages[activeLanguage].categories[categoryId].title;
+        const categoryTitle = dsaProblems.categories[categoryId].title;
         const filteredCategoryProblems = filterProblems(
-          problemsData[categoryId]
+          problemsData[categoryId],
+          categoryTitle
         );
 
         // Only show sections with matching problems
-        if (filteredCategoryProblems.length === 0 && activeTab !== "All")
+        if (filteredCategoryProblems.length === 0)
           return null;
 
         return (

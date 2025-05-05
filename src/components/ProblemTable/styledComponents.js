@@ -68,6 +68,10 @@ export const Td = styled.td`
   padding: 0.75rem 1rem;
   border-bottom: 1px solid #e5e7eb;
   font-size: 0.875rem;
+  text-decoration:none;
+  a{
+    text-decoration:none;
+  }
 `;
 
 export const DifficultyBadge = styled.span`

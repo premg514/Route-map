@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons"; // for filled star
 import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons"; // for empty star
-import {
-  faGithub,
-  faYoutube,
-} from "@fortawesome/free-brands-svg-icons";
+import { faGithub, faYoutube } from "@fortawesome/free-brands-svg-icons";
 
 import {
   Container,
@@ -121,8 +118,10 @@ const ProblemTable = ({
                       onChange={() => toggleSolvedStatus(index)}
                     />
                   </Td>
-                  <Td style={{ color: "#3C9BD9", cursor: "pointer" }}>
-                    {problem.name}
+                  <Td >
+                    <a style={{ color: "#3C9BD9", cursor: "pointer" }} href={problem.links.leetcode} target="_blank">
+                      {problem.name}
+                    </a>
                   </Td>
                   <Td>
                     <DifficultyBadge level={problem.difficulty?.toLowerCase()}>

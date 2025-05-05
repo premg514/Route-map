@@ -1,15 +1,20 @@
-import React from 'react';
-import { Card, CardContent, CardIcon, CardDetails, CardTitle, CardSubtitle } from './styledComponents';
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardTitle,
+  CardSubtitle,
+  CardIcon,
+} from "./styledComponents";
 
-const FeatureCard = ({ title, subtitle, icon, type, active }) => {
+const FeatureCard = ({ title, subtitle, icon, type, active, onClick }) => {
   return (
-    <Card active={active}>
-      <CardContent>
-        <CardIcon src={icon} type={type}></CardIcon>
-        <CardDetails active={active}>
-          <CardTitle active={active}>{title}</CardTitle>
-          <CardSubtitle active={active}>{subtitle}</CardSubtitle>
-        </CardDetails>
+    <Card active={active} onClick={() => onClick(type)}>
+      <CardIcon src={icon} alt={title} />
+
+      <CardContent active={active}>
+        <CardTitle active={active}>{title}</CardTitle>
+        <CardSubtitle active={active}>{subtitle}</CardSubtitle>
       </CardContent>
     </Card>
   );

@@ -9,6 +9,8 @@ export const Card = styled.div`
   font-family: Inter, Sans-serif;
   width: 300px;
   transition: all 0.3s ease;
+  display:flex;
+  gap:5px;
   
   /* Tablet landscape */
   @media (min-width: 769px) and (max-width: 1024px) {
@@ -32,12 +34,16 @@ export const Card = styled.div`
 
 export const CardContent = styled.div`
   display: flex;
+  flex-direction:column;
   gap: 4px;
   align-items: center;
   
   /* Tablet */
   @media (min-width: 481px) and (max-width: 1024px) {
     gap: 8px;
+  }
+  @media(max-width:480px){
+    display:${props=>props.active?"block":"none"};
   }
 `;
 
