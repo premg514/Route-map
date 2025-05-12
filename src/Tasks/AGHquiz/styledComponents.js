@@ -1,12 +1,20 @@
 import styled from "styled-components";
-
-export const Container = styled.div`
+export const ParentContainer = styled.div`
   max-width: 100%;
+  background: #fafbff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+export const Container = styled.div`
+  width: 75%;
   margin: 0;
   padding: 2rem;
   background: #fafbff;
   @media (max-width: 480px) {
     padding: 6px;
+    width: 100%;
   }
 `;
 
@@ -30,8 +38,8 @@ export const Subtitle = styled.p`
 
 export const CardsContainer = styled.div`
   display: flex;
-  justify-content:space-between;
-  align-items:center;
+  justify-content: space-between;
+  align-items: center;
   gap: 4px;
   margin-bottom: 1.5rem;
   max-width: 100%;
@@ -64,7 +72,7 @@ export const StatsSection = styled.div`
     gap: 1.5rem;
   }
   @media (max-width: 480px) {
-    justify-content:space-between;
+    justify-content: space-between;
   }
 `;
 
@@ -138,8 +146,9 @@ export const DifficultyCard = styled.div`
 
 export const DifficultyCardTitle = styled.div`
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   margin-bottom: 0.25rem;
+  font-family: Work Sans, sans-serif;
 
   ${(props) =>
     props.level === "easy" &&
@@ -185,19 +194,21 @@ export const SearchBar = styled.div`
 `;
 
 export const SearchInput = styled.input`
-  width: 100%;
+  width: 98%;
   padding: 0.5rem;
   border: 1px solid #e5e7eb;
   border-radius: 0.375rem;
   background-color: #f7f4f4;
   font-size: 0.875rem;
   outline: none;
+  color: #928284;
+  height:20px;
 `;
 
 export const SearchIcon = styled.div`
   position: absolute;
-  right: 0.75rem;
-  top: 50%;
+  right: 1%;
+  top: 70%;
   transform: translateY(-50%);
   color: #6b7280;
   display: flex;
@@ -223,9 +234,9 @@ export const FilterWrapper = styled.div`
 
 export const FilterLabel = styled.label`
   display: block;
-  font-size: 0.75rem;
+  font-size: 16px;
   margin-bottom: 0.25rem;
-  color: #6b7280;
+  color: #343434;
   font-family: Work Sans, sans-serif;
 `;
 
@@ -237,6 +248,8 @@ export const FilterSelect = styled.select`
   background-color: #f7f4f4;
   font-size: 0.875rem;
   outline: none;
+  color: #928284;
+  
 `;
 
 export const TabsContainer = styled.div`
@@ -261,6 +274,7 @@ export const Tab = styled.button`
   color: ${(props) => (props.active ? "#ffffff" : "#928284")};
   cursor: pointer;
   white-space: nowrap;
+  font-family: Montserrat;
 `;
 
 export const TopicSection = styled.section`

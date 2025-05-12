@@ -15,6 +15,7 @@ import {
   IconButton,
   ProgressBarFill,
   ProgressBarContainer,
+  Thead,
 } from "./styledComponents";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -92,7 +93,7 @@ const ProblemTable = ({
 
       <TableContainer>
         <Table>
-          <thead>
+          <Thead>
             <tr>
               <Th style={{ width: "5%" }}>Status</Th>
               <Th style={{ width: "35%" }}>Problem</Th>
@@ -100,7 +101,7 @@ const ProblemTable = ({
               <Th style={{ width: "25%" }}>Solution</Th>
               <Th style={{ width: "20%" }}>Mark for Revision</Th>
             </tr>
-          </thead>
+          </Thead>
           <tbody>
             {problemsList.length === 0 ? (
               <tr>
@@ -137,7 +138,7 @@ const ProblemTable = ({
                         rel="noopener noreferrer"
                         aria-label="View code on GitHub"
                       >
-                        <FontAwesomeIcon fontSize="18" icon={faGithub} />
+                        <FontAwesomeIcon fontSize="20" icon={faGithub} />
                       </IconButton>
                     )}
                     {problem.links?.youtube && (
@@ -148,7 +149,7 @@ const ProblemTable = ({
                         rel="noopener noreferrer"
                         aria-label="Watch tutorial on YouTube"
                       >
-                        <FontAwesomeIcon fontSize="18px" icon={faYoutube} />
+                        <FontAwesomeIcon fontSize="20px" icon={faYoutube} />
                       </IconButton>
                     )}
                   </Td>
